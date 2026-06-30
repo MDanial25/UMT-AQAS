@@ -3,12 +3,14 @@ const mysql = require('mysql2');
 // ========================================
 // DATABASE CONNECTION CONFIGURATION
 // ========================================
+// Uses Railway's auto-generated MySQL env vars when present (production),
+// and falls back to local defaults for development on your own machine.
 const connection = mysql.createConnection({
-    host: 'localhost',       // MySQL host
-    user: 'root',            // MySQL username (change if different)
-    password: '',            // MySQL password (change to your password)
-    database: 'umt_aqas',    // Database name
-    port: 3306               // MySQL port (default is 3306)
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'umt_aqas',
+    port: process.env.MYSQLPORT || 3306
 });
 
 // ========================================
@@ -17,10 +19,10 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) {
         console.error('❌ Database connection failed:', err.message);
-        console.error('Please check your MySQL credentials in config/database.js');
+        console.error('Please check your MySQL credentials / environment variables');
         process.exit(1);
     }
-    console.log('✅ Connected to MySQL Database: umt_aqas');
+    console.log(`✅ Connected to MySQL Database: ${process.env.MYSQLDATABASE || 'umt_aqas'}`);
 });
 
 // ========================================

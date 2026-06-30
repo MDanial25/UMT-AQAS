@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Reporting | UMT AQAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            padding: 0 20px;
+            margin-bottom: 40px;
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            padding: 15px 30px;
+            margin: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu li span {
+            font-size: 20px;
+        }
+
+        .menu li:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .menu li.active {
+            background: rgba(255,255,255,0.25);
+            font-weight: 600;
+        }
+
+        .menu li.logout {
+            margin-top: 50px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .header-section p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Report Type Cards */
+        .report-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .report-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.2);
+            border-color: #667eea;
+        }
+
+        .report-card.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        }
+
+        .report-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .report-card h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .report-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Report Preview */
+        .report-preview {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .report-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .report-header h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .report-body {
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* Table in Report */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .report-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .report-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-stat .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .summary-stat .label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-in-progress { background: #fef3c7; color: #92400e; }
+        .status-pending { background: #dbeafe; color: #1e40af; }
+        .status-assigned { background: #dcfce7; color: #166534; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-expired { background: #fee2e2; color: #dc2626; }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .report-actions { flex-wrap: wrap; }
+        }
+
+        @media print {
+            .sidebar, .report-cards, .filter-section, .report-actions, .btn-primary, .btn-secondary, .btn-outline {
+                display: none !important;
+            }
+            .report-preview {
+                display: block !important;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+            .report-header {
+                background: #333;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>🎓 UMT AQAS</h2>
+            </div>
+            <ul class="menu">
+                <li onclick="location.href='dashboard.html'"><span>📊</span> Dashboard</li>
+                <li onclick="location.href='internal-evaluation.html'"><span>📋</span> Internal Evaluation</li>
+                <li onclick="location.href='submit-program.html'"><span>📝</span> Submit Program Details</li>
+                <li onclick="location.href='view-submissions.html'"><span>📄</span> View Submissions</li>
+                <li onclick="location.href='assign-evaluator.html'"><span>👥</span> Assign Evaluator</li>
+                <li onclick="location.href='payment-certificate.html'"><span>💳</span> Payment & Certificate</li>
+                <li class="active"><span>📈</span> Reporting</li>
+                <li class="logout" onclick="location.href='login.html'"><span>🚪</span> Logout</li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header-section">
+                <div>
+                    <h1>QA Reporting</h1>
+                    <p>Generate and export quality assurance reports for monitoring and decision-making</p>
+                </div>
+                <div>
+                    <span style="background:#e8f4fc; padding:8px 15px; border-radius:20px; font-size:13px;">
+                        <i class="fas fa-chart-line"></i> MQA COPPA Standard 11: Continuous Quality Improvement
+                    </span>
+                </div>
+            </div>
+
+            <!-- Report Type Selection -->
+            <div class="report-cards">
+                <div class="report-card" data-report="evaluation" onclick="selectReport('evaluation')">
+                    <div class="report-icon">📋</div>
+                    <h3>Internal Evaluation Report</h3>
+                    <p>Summary of all program evaluations, status, scores, and evaluator assignments.</p>
+                </div>
+                <div class="report-card" data-report="accreditation" onclick="selectReport('accreditation')">
+                    <div class="report-icon">🏆</div>
+                    <h3>Accreditation Status Report</h3>
+                    <p>Track PA/FA accreditation status, certificate validity, and payment records.</p>
+                </div>
+                <div class="report-card" data-report="program" onclick="selectReport('program')">
+                    <div class="report-icon">📊</div>
+                    <h3>Program Summary Report</h3>
+                    <p>Comprehensive overview of all academic programs in the system.</p>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-title">
+                    <i class="fas fa-sliders-h"></i> Report Filters
+                </div>
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label>Faculty</label>
+                        <select id="filterFaculty">
+                            <option value="">All Faculties</option>
+                            <option value="FSKM">FSKM - Computer Science</option>
+                            <option value="FSM">FSM - Marine Science</option>
+                            <option value="FPSA">FPSA - Fisheries</option>
+                            <option value="FSSA">FSSA - Food Science</option>
+                            <option value="FPEPS">FPEPS - Business</option>
+                            <option value="FTKL">FTKL - Ocean Engineering</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="Pending Review">Pending Review</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Accreditation Type</label>
+                        <select id="filterAccreditationType">
+                            <option value="">All Types</option>
+                            <option value="PA">Provisional (PA)</option>
+                            <option value="FA">Full (FA)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Date Range</label>
+                        <input type="month" id="filterMonth">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-secondary" onclick="resetFilters()">
+                        <i class="fas fa-undo-alt"></i> Reset
+                    </button>
+                    <button class="btn-primary" onclick="generateReport()">
+                        <i class="fas fa-chart-line"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Preview -->
+            <div id="reportPreview" class="report-preview">
+                <div class="report-header">
+                    <h2 id="reportTitle">Internal Evaluation Report</h2>
+                    <div class="report-actions">
+                        <button class="btn-outline" onclick="exportPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button class="btn-outline" onclick="exportExcel()">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                        <button class="btn-outline" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+                <div class="report-body" id="reportBody">
+                    <div style="text-align:center; padding:40px; color:#999;">
+                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                        <p>Select report type and click "Generate Report"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentReportType = 'evaluation';
+        let reportData = [];
+
+        function selectReport(type) {
+            currentReportType = type;
+            document.querySelectorAll('.report-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`.report-card[data-report="${type}"]`).classList.add('active');
+            
+            // Auto-generate when report type changes
+            generateReport();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterFaculty').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterAccreditationType').value = '';
+            document.getElementById('filterMonth').value = '';
+            generateReport();
+        }
+
+        async function generateReport() {
+            const faculty = document.getElementById('filterFaculty').value;
+            const status = document.getElementById('filterStatus').value;
+            const accType = document.getElementById('filterAccreditationType').value;
+            const month = document.getElementById('filterMonth').value;
+
+            document.getElementById('reportPreview').style.display = 'block';
+            
+            if (currentReportType === 'evaluation') {
+                await generateEvaluationReport(faculty, status);
+            } else if (currentReportType === 'accreditation') {
+                await generateAccreditationReport(faculty, accType);
+            } else if (currentReportType === 'program') {
+                await generateProgramReport(faculty, month);
+            }
+        }
+
+        async function generateEvaluationReport(faculty, status) {
+            try {
+                const res = await fetch('/api/program-submissions');
+                let programs = await res.json();
+                
+                // Apply filters
+                if (faculty) {
+                    programs = programs.filter(p => p.faculty === faculty);
+                }
+                if (status) {
+                    programs = programs.filter(p => p.status === status);
+                }
+
+                const totalPrograms = programs.length;
+                const completed = programs.filter(p => p.status === 'Completed').length;
+                const inProgress = programs.filter(p => p.status === 'Under Review' || p.status === 'Assigned').length;
+                const pending = programs.filter(p => p.status === 'Pending Review').length;
+
+                let tableRows = '';
+                programs.forEach(p => {
+                    tableRows += `
+                        <tr>
+                            <td>${p.program_code || 'N/A'}</td>
+                            <td>${p.program_name || 'N/A'}</td>
+                            <td>${p.faculty || 'N/A'}</td>
+                            <td>${p.submission_date ? new Date(p.submission_date).toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status-badge status-${(p.status || 'pending').toLowerCase().replace(' ', '-')}">${p.status || 'Pending Review'}</span></td>
+                            <td>${p.assigned_evaluator_name || 'Not assigned'}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('reportTitle').innerHTML = '<i class="fas fa-clipboard-list"></i> Internal Evaluation Report';
+                document.getElementById('reportBody').innerHTML = `
+                    <div class="summary-stats">
+                        <div class="summary-stat"><div class="number">${totalPrograms}</div><div class="label">Total Programs</div></div>
+                        <div class="summary-stat"><div class="number">${completed}</div><div class="label">Completed</div></div>
+                        <div class="summary-stat"><div class="number">${inProgress}</div><div class="label">In Progress</div></div>
+                        <div class="summary-stat"><div class="number">${pending}</div><div class="label">Pending</div></div>
+                    </div>
+                    <table class="report-table">
+                        <thead><tr><th>Program Code</th><th>Program Name</th><th>Faculty</th><th>Submission Date</th><th>Status</th><th>Evaluator</th></tr></thead>
+                        <tbody>${tableRows || '<tr><td colspan="6" style="text-align:center">No data found</td></tr>'}</tbody>
+                    </table>
+                    <div style="margin-top:20px; font-size:11px; color:#999; text-align:center; border-top:1px solid #eee; padding-top:15px;">
+                        Generated by UMT AQAS | MQA COPPA Compliant | ${new Date().toLocaleString()}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error:', e);
+                document.getElementById('reportBody').innerHTML = '<div style="text-align:center;padding:40px;color:#dc3545;">Error loading report data</div>';
+            }
+        }
+
+        async function generateAccreditationReport(faculty, accType) {
+            // Mock accreditation data (will be replaced with API)
+            const accreditationData = [
+                { program_code: "CS4001", program_name: "Bachelor of Computer Science", faculty: "FSKM", type: "PA", cert_no: "MQA/PA1234/2024", issue_date: "2024-01-15", expiry_date: "2029-01-14", payment: 15000, status: "Active" },
+                { program_code: "MS5002", program_name: "Bachelor of Marine Science", faculty: "FSM", type: "FA", cert_no: "MQA/FA5678/2023", issue_date: "2023-06-20", expiry_date: "2028-06-19", payment: 20000, status: "Active" }
+            ];
+
+            let data = accreditationData;
+            if (faculty) data = data.filter(d => d.faculty === faculty);
+            if (accType) data = data.filter(d => d.type === accType);
+
+            const totalPA = data.filter(d => d.type === 'PA').length;
+            const totalFA = data.filter(d => d.type === 'FA').length;
+            const totalPayment = data.reduce((sum, d) => sum + d.payment, 0);
+
+            let tableRows = '';
+            data.forEach(d => {
+                const expired = new Date(d.expiry_date) < new Date();
+                tableRows += `
+                    <tr>
+                        <td>${d.program_code}</td>
+                        <td>${d.program_name}</td>
+                        <td>${d.faculty}</td>
+                        <td><span class="status-badge ${d.type === 'PA' ? 'status-pending' : 'status-completed'}">${d.type}</span></td>
+                        <td>${d.cert_no}</td>
+                        <td>${new Date(d.issue_date).toLocaleDateString()}</td>
+                        <td>${new Date(d.expiry_date).toLocaleDateString()}</td>
+                        <td>RM${d.payment.toLocaleString()}</td>
+                        <td><span class="status-badge ${expired ? 'status-expired' : 'status-active'}">${expired ? 'Expired' : 'Active'}</span></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('reportTitle').innerHTML = '<i class="fas fa-trophy"></i> Accreditation Status Report';
+            document.getElementById('reportBody').innerHTML = `
+                <div class="summary-stats">
+                    <div class="summary-stat"><div class="number">${totalPA + totalFA}</div><div class="label">Total Accredited</div></div>
+                    <div class="summary-stat"><div class="number">${totalPA}</div><div class="label">Provisional (PA)</div></div>
+                    <div class="summary-stat"><div class="number">${totalFA}</div><div class="label">Full (FA)</div></div>
+                    <div class="summary-stat"><div class="number">RM${totalPayment.toLocaleString()}</div><div class="label">Total Payment</div></div>
+                </div>
+                <table class="report-table">
+                    <thead><tr><th>Program Code</th><th>Program Name</th><th>Faculty</th><th>Type</th><th>Certificate No.</th><th>Issue Date</th><th>Expiry Date</th><th>Payment</th><th>Status</th></tr></thead>
+                    <tbody>${tableRows || '<tr><td colspan="9" style="text-align:center">No data found</td></tr>'}</tbody>
+                </table>
+                <div style="margin-top:20px; font-size:11px; color:#999; text-align:center; border-top:1px solid #eee; padding-top:15px;">
+                    Generated by UMT AQAS | MQA COPPA Standard 10 Compliant | ${new Date().toLocaleString()}
+                </div>
+            `;
+        }
+
+        async function generateProgramReport(faculty, month) {
+            try {
+                const res = await fetch('/api/program-submissions');
+                let programs = await res.json();
+                
+                if (faculty) programs = programs.filter(p => p.faculty === faculty);
+                if (month) {
+                    programs = programs.filter(p => p.submission_date && p.submission_date.startsWith(month));
+                }
+
+                let tableRows = '';
+                programs.forEach(p => {
+                    tableRows += `
+                        <tr>
+                            <td>${p.program_code || 'N/A'}</td>
+                            <td>${p.program_name || 'N/A'}</td>
+                            <td>${p.faculty || 'N/A'}</td>
+                            <td>${p.mqf_level || 'N/A'}</td>
+                            <td>${p.credit_hours || 'N/A'}</td>
+                            <td>${p.submission_date ? new Date(p.submission_date).toLocaleDateString() : 'N/A'}</td>
+                            <td><span class="status-badge status-${(p.status || 'pending').toLowerCase().replace(' ', '-')}">${p.status || 'Pending Review'}</span></td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('reportTitle').innerHTML = '<i class="fas fa-university"></i> Program Summary Report';
+                document.getElementById('reportBody').innerHTML = `
+                    <div class="summary-stats">
+                        <div class="summary-stat"><div class="number">${programs.length}</div><div class="label">Total Programs</div></div>
+                        <div class="summary-stat"><div class="number">${programs.filter(p => p.status === 'Completed').length}</div><div class="label">Evaluated</div></div>
+                        <div class="summary-stat"><div class="number">${programs.filter(p => p.status === 'Pending Review').length}</div><div class="label">Pending</div></div>
+                    </div>
+                    <table class="report-table">
+                        <thead><tr><th>Program Code</th><th>Program Name</th><th>Faculty</th><th>MQF Level</th><th>Credit Hours</th><th>Submission Date</th><th>Status</th></tr></thead>
+                        <tbody>${tableRows || '<tr><td colspan="7" style="text-align:center">No data found</td></tr>'}</tbody>
+                    </table>
+                    <div style="margin-top:20px; font-size:11px; color:#999; text-align:center; border-top:1px solid #eee; padding-top:15px;">
+                        Generated by UMT AQAS | MQA COPPA Compliant | ${new Date().toLocaleString()}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error:', e);
+            }
+        }
+
+        function exportPDF() {
+            const printContents = document.getElementById('reportPreview').cloneNode(true);
+            const originalTitle = document.title;
+            document.title = document.getElementById('reportTitle').innerText.replace(/<[^>]*>/g, '');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>${document.title}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; }
+                        .report-table { width: 100%; border-collapse: collapse; }
+                        .report-table th, .report-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        .report-table th { background: #f5f5f5; }
+                        .summary-stats { display: flex; gap: 20px; margin-bottom: 20px; }
+                        .summary-stat { background: #f5f5f5; padding: 15px; border-radius: 8px; text-align: center; flex: 1; }
+                        .summary-stat .number { font-size: 28px; font-weight: bold; color: #667eea; }
+                        .status-badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+                        .status-completed { background: #d1fae5; }
+                        .status-pending { background: #dbeafe; }
+                        .status-in-progress { background: #fef3c7; }
+                    </style>
+                </head>
+                <body>
+                    ${printContents.querySelector('.report-header').outerHTML}
+                    ${printContents.querySelector('.report-body').innerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            document.title = originalTitle;
+        }
+
+        function exportExcel() {
+            const table = document.querySelector('#reportBody table');
+            if (!table) {
+                alert('No data to export');
+                return;
+            }
+            
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('th, td').forEach(cell => {
+                    rowData.push('"' + cell.innerText.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+            
+            const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${document.getElementById('reportTitle').innerText.replace(/<[^>]*>/g, '')}_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Auto-select first report on load
+        selectReport('evaluation');
+    </script>
+</body>
+</html>

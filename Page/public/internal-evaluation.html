@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Evaluation | UMT AQAS</title>
+    <link rel="stylesheet" href="css/internal-evaluation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>🎓 UMT AQAS</h2>
+            </div>
+            <ul class="menu">
+                <li onclick="location.href='dashboard.html'">
+                    <span>📊</span> Dashboard
+                </li>
+                <li class="active">
+                    <span>📋</span> Internal Evaluation
+                </li>
+                <li onclick="location.href='submit-program.html'">
+                    <span>📝</span> Submit Program Details
+                </li>
+                </li>
+                <li onclick="location.href='view-submissions.html'">
+                    <span>📋</span> View Submissions
+                </li>
+                <li onclick="location.href='assign-evaluator.html'">
+                    <span>👥</span> Assign Evaluator
+                </li>
+                <li onclick="location.href='payment-certificate.html'">
+                    <span>💳</span> Payment & Certificate
+                </li>
+                <li onclick="location.href='reporting.html'">
+                    <span>📈</span> Reporting
+                </li>
+                <li class="logout" onclick="location.href='login.html'">
+                    <span>🚪</span> Logout
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header-section">
+                <div>
+                    <h1>Internal Evaluation</h1>
+                    <p>Manage program and course evaluations</p>
+                </div>
+                <button class="btn-primary" onclick="location.href='add-evaluation.html'">
+                    <i class="fa fa-plus"></i> New Evaluation
+                </button>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-input">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search evaluations..." onkeyup="filterTable()">
+                </div>
+                <div class="status-select">
+                    <select id="statusFilter" onchange="filterTable()">
+                        <option value="">All Status</option>
+                        <option value="Completed">Completed</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Draft">Draft</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>PROGRAM</th>
+                            <th>DEPARTMENT</th>
+                            <th>EVALUATOR</th>
+                            <th>DATE</th>
+                            <th>STATUS</th>
+                            <th>SCORE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evaluationTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px;">
+                                <p style="color: #999;">No evaluations yet. Click "New Evaluation" to add one.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Evaluation Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Date formatting function
+        function formatDateISO(dateString) {
+            if (!dateString) return 'N/A';
+            
+            if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                return dateString;
+            }
+            
+            try {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Load all evaluations
+        async function loadEvaluations() {
+            try {
+                const res = await fetch('/api/evaluations');
+                const data = await res.json();
+                
+                const tbody = document.getElementById('evaluationTableBody');
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px;">
+                                <p style="color: #999;">No evaluations yet. Click "New Evaluation" to add one.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = data.map(item => `
+                    <tr>
+                        <td><strong>EV${String(item.id).padStart(4, '0')}</strong></td>
+                        <td><strong>${item.program_name}</strong></td>
+                        <td>${item.department}</td>
+                        <td>${item.evaluator_name}</td>
+                        <td>${formatDateISO(item.evaluation_date)}</td>
+                        <td><span class="status-pill ${item.status.toLowerCase().replace(" ", "-")}">${item.status}</span></td>
+                        <td style="font-weight:bold; color:#10b981">${item.score}%</td>
+                        <td class="actions">
+                            <i class="fa fa-eye view-icon" onclick="viewItem(${item.id})" title="View"></i>
+                            <i class="fa fa-edit edit-icon" onclick="location.href='add-evaluation.html?edit=${item.id}'" title="Edit"></i>
+                            <i class="fa fa-trash delete-icon" onclick="deleteItem(${item.id})" title="Delete"></i>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Error loading evaluations:', e);
+            }
+        }
+
+        // Delete evaluation
+        async function deleteItem(id) {
+            if(confirm("Are you sure you want to delete this evaluation?")) {
+                try {
+                    await fetch(`/api/evaluations/${id}`, { method: 'DELETE' });
+                    loadEvaluations();
+                } catch (e) {
+                    console.error('Error deleting:', e);
+                }
+            }
+        }
+
+        // View evaluation details
+        async function viewItem(id) {
+            try {
+                const res = await fetch(`/api/evaluations/${id}`);
+                const data = await res.json();
+                
+                const areas = [
+                    "Programme Development and Delivery",
+                    "Assessment of Student Learning",
+                    "Student Selection and Support Services",
+                    "Academic Staff",
+                    "Educational Resources",
+                    "Programme Management",
+                    "Programme Monitoring, Review and Continual Quality Improvement"
+                ];
+
+                let modalContent = `
+                    <div class="detail-section">
+                        <h3>Basic Information</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <strong>Program:</strong>
+                                <span>${data.program_name}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Department:</strong>
+                                <span>${data.department}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Evaluator:</strong>
+                                <span>${data.evaluator_name}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Date:</strong>
+                                <span>${formatDateISO(data.evaluation_date)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Overall Score:</strong>
+                                <span class="score-badge">${data.score}%</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Status:</strong>
+                                <span class="status-badge">${data.status}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Evaluation Areas</h3>
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Area</th>
+                                    <th>Rating</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                for(let i = 1; i <= 7; i++) {
+                    const rating = data['rating_area' + i];
+                    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                    const comment = data['comments_area' + i] || '<em style="color: #999;">No comments</em>';
+                    
+                    modalContent += `
+                        <tr>
+                            <td>${i}</td>
+                            <td>${areas[i-1]}</td>
+                            <td><span class="stars">${stars}</span> (${rating}/5)</td>
+                            <td>${comment}</td>
+                        </tr>
+                    `;
+                }
+
+                modalContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('modalBody').innerHTML = modalContent;
+                document.getElementById('viewModal').style.display = 'block';
+                
+            } catch (e) {
+                console.error('Error viewing:', e);
+                alert('Error loading evaluation details');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('viewModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('viewModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Filter table
+        function filterTable() {
+            const searchText = document.getElementById("searchInput").value.toUpperCase();
+            const statusFilter = document.getElementById("statusFilter").value;
+            const rows = document.getElementById("evaluationTableBody").getElementsByTagName("tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.innerText.toUpperCase();
+                
+                const matchesSearch = text.includes(searchText);
+                const matchesStatus = !statusFilter || text.includes(statusFilter.toUpperCase());
+                
+                row.style.display = (matchesSearch && matchesStatus) ? "" : "none";
+            }
+        }
+
+        // Load evaluations when page loads
+        window.onload = loadEvaluations;
+    </script>
+</body>
+</html>

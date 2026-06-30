@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Evaluation | UMT AQAS</title>
+    <link rel="stylesheet" href="css/add-evaluation.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1 id="formTitle">📝 New Evaluation</h1>
+            <p>Enter quality assurance metrics</p>
+        </div>
+
+        <form id="evalForm" action="/submit-evaluation" method="POST">
+            <!-- Basic Information -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Program Name *</label>
+                    <select name="program_name" required>
+                        <option value="">Please Select</option>
+                        <option value="BACHELOR OF APPLIED SCIENCE (FISHERIES) WITH HONOURS">BACHELOR OF APPLIED SCIENCE (FISHERIES) WITH HONOURS</option>
+                        <option value="BACHELOR OF FOOD SCIENCE (FOOD TECHNOLOGY) WITH HONOURS">BACHELOR OF FOOD SCIENCE (FOOD TECHNOLOGY) WITH HONOURS</option>
+                        <option value="BACHELOR OF COMP. SC (SOFTWARE ENGINEERING) WITH HONOURS">BACHELOR OF COMP. SC (SOFTWARE ENGINEERING) WITH HONOURS</option>
+                        <option value="BACHELOR OF TECHNOLOGY (ENVIRONMENTAL) WITH HONOURS">BACHELOR OF TECHNOLOGY (ENVIRONMENTAL) WITH HONOURS</option>
+                        <option value="BACHELOR OF MANAGEMENT (MARITIME) WITH HONOURS">BACHELOR OF MANAGEMENT (MARITIME) WITH HONOURS</option>
+                        <option value="BACHELOR OF MANAGEMENT (MARKETING) WITH HONOURS">BACHELOR OF MANAGEMENT (MARKETING) WITH HONOURS</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select name="department" required>
+                        <option value="">Please Select</option>
+                        <option value="FPSA">FACULTY OF FISHERIES SCIENCES AND AQUACULTURE  (FPSA)</option>
+                        <option value="FSSA">FACULTY OF FOOD SCIENCES AND AGROTECHNOLOGY    (FSSA)</option>
+                        <option value="FSM">FACULTY OF SCIENCE AND MARINE ENVIRONMENT       (FSM)</option>
+                        <option value="FSKM">FACULTY OF COMPUTER SCIENCE AND MATHEMATICS  (FSKM)</option>
+                        <option value="FTKL">FACULTY OF OCEAN ENGINEERING TECHNOLOGY  (FTKL)</option>
+                        <option value="FPM">FACULTY OF MARITIME STUDIES  (FPM)</option>
+                        <option value="FPEPS">FACULTY OF BUSINESS, ECONOMICS AND SOCIAL DEVELOPMENT  (FPEPS)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Evaluator Name *</label>
+                    <select name="evaluator_name" required>
+                        <option value="">Please Select</option>
+                        <option value="Dr. Ahmad Hassan">Dr. Ahmad Hassan</option>
+                        <option value="Prof. Siti Nurhaliza">Prof. Siti Nurhaliza</option>
+                        <option value="Dr. Lee Wei Ming">Dr. Lee Wei Ming</option>
+                        <option value="Dr. Fatimah Ibrahim">Dr. Fatimah Ibrahim</option>
+                        <option value="Prof. Kumar Rajesh">Prof. Kumar Rajesh</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Evaluation Date *</label>
+                    <input type="date" name="evaluation_date" required>
+                </div>
+                
+                <!-- NEW: Status Selection -->
+                <div class="form-group">
+                    <label>Evaluation Status *</label>
+                    <select name="status" required>
+                        <option value="">Please Select</option>
+                        <option value="Completed">✅ Completed</option>
+                        <option value="In Progress">🔄 In Progress</option>
+                        <option value="Pending">⏳ Pending</option>
+                        <option value="Draft">📝 Draft</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Evaluation Criteria Table -->
+            <h3 class="section-title">Evaluation Criteria</h3>
+            <p class="section-subtitle">Rate each area from 1 (Poor) to 5 (Excellent) stars</p>
+
+            <div class="table-wrapper">
+                <table class="criteria-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No.</th>
+                            <th style="width: 35%;">Evaluation Area</th>
+                            <th style="width: 40%;">Comments</th>
+                            <th style="width: 180px;">Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="number">1</td>
+                            <td class="area-name">Programme Development and Delivery</td>
+                            <td>
+                                <input type="text" name="comments_area1" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area1" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">2</td>
+                            <td class="area-name">Assessment of Student Learning</td>
+                            <td>
+                                <input type="text" name="comments_area2" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area2" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">3</td>
+                            <td class="area-name">Student Selection and Support Services</td>
+                            <td>
+                                <input type="text" name="comments_area3" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area3" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">4</td>
+                            <td class="area-name">Academic Staff *</td>
+                            <td>
+                                <input type="text" name="comments_area4" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area4" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">5</td>
+                            <td class="area-name">Educational Resources</td>
+                            <td>
+                                <input type="text" name="comments_area5" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area5" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">6</td>
+                            <td class="area-name">Programme Management</td>
+                            <td>
+                                <input type="text" name="comments_area6" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area6" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="number">7</td>
+                            <td class="area-name">Programme Monitoring, Review and Continual Quality Improvement</td>
+                            <td>
+                                <input type="text" name="comments_area7" placeholder="Add comments...">
+                            </td>
+                            <td>
+                                <select name="rating_area7" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    <option value="2">★★☆☆☆ (2 - Fair)</option>
+                                    <option value="3">★★★☆☆ (3 - Good)</option>
+                                    <option value="4">★★★★☆ (4 - Very Good)</option>
+                                    <option value="5">★★★★★ (5 - Excellent)</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    ✅ Submit Evaluation
+                </button>
+                <button type="button" class="btn-outline" onclick="location.href='internal-evaluation.html'">
+                    ❌ Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Check if we're editing an existing evaluation
+        const editId = new URLSearchParams(window.location.search).get('edit');
+        
+        if (editId) {
+            // Change title to Edit
+            document.getElementById('formTitle').innerText = "✏️ Edit Evaluation";
+            
+            // Load existing data
+            fetch(`/api/evaluations/${editId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const form = document.getElementById('evalForm');
+                    form.program_name.value = data.program_name;
+                    form.department.value = data.department;
+                    form.evaluator_name.value = data.evaluator_name;
+                    form.evaluation_date.value = data.evaluation_date;
+                    form.status.value = data.status; // Load status
+                    
+                    // Load ratings and comments for each area
+                    for (let i = 1; i <= 7; i++) {
+                        if (data['comments_area' + i]) {
+                            form['comments_area' + i].value = data['comments_area' + i];
+                        }
+                        if (data['rating_area' + i]) {
+                            form['rating_area' + i].value = data['rating_area' + i];
+                        }
+                    }
+                });
+
+            // Override form submission for updates
+            document.getElementById('evalForm').onsubmit = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData);
+                
+                await fetch(`/api/evaluations/${editId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                location.href = 'internal-evaluation.html';
+            };
+        }
+    </script>
+</body>
+</html>

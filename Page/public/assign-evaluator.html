@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Internal Evaluator | UMT AQAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/assign-evaluator.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>🎓 UMT AQAS</h2>
+            </div>
+            <ul class="menu">
+                <li onclick="location.href='dashboard.html'"><span>📊</span> Dashboard</li>
+                <li onclick="location.href='internal-evaluation.html'"><span>📋</span> Internal Evaluation</li>
+                <li onclick="location.href='submit-program.html'"><span>📝</span> Submit Program Details</li>
+                <li onclick="location.href='view-submissions.html'"><span>📄</span> View Submissions</li>
+                <li class="active"><span>👥</span> Assign Evaluator</li>
+                <li onclick="location.href='payment-certificate.html'"><span>💳</span> Payment & Certificate</li>
+                <li onclick="location.href='reporting.html'"><span>📈</span> Reporting</li>
+                <li class="logout" onclick="location.href='/api/logout'"><span>🚪</span> Logout</li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header-section">
+                <div>
+                    <h1>Assign Internal Evaluator</h1>
+                    <p>Assign JKA/Senate members to review academic programs based on MQA COPPA standards</p>
+                </div>
+                <button class="btn-primary" onclick="location.href='view-submissions.html'">
+                    <i class="fa fa-list"></i> View All Submissions
+                </button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="card purple">
+                    <div class="card-icon">⏳</div>
+                    <div class="card-content">
+                        <h3>Pending Assignment</h3>
+                        <h2 id="pendingCount">0</h2>
+                        <p>Programs waiting for evaluator</p>
+                    </div>
+                </div>
+                <div class="card green">
+                    <div class="card-icon">✅</div>
+                    <div class="card-content">
+                        <h3>Assigned</h3>
+                        <h2 id="assignedCount">0</h2>
+                        <p>Evaluators assigned</p>
+                    </div>
+                </div>
+                <div class="card blue">
+                    <div class="card-icon">👥</div>
+                    <div class="card-content">
+                        <h3>Active Evaluators</h3>
+                        <h2 id="evaluatorCount">0</h2>
+                        <p>Available JKA/Senate members</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MQA COPPA Info -->
+            <div class="coppa-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>MQA COPPA Standard 7.2:</strong> Internal quality assurance processes must involve qualified internal evaluators appointed by the Senate/JKA.
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-input">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search by program code or name..." onkeyup="filterTable()">
+                </div>
+                <div class="status-select">
+                    <select id="statusFilter" onchange="filterTable()">
+                        <option value="">All Status</option>
+                        <option value="Pending Review">Pending Assignment</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="Under Review">Under Review</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>REF #</th>
+                            <th>PROGRAM CODE</th>
+                            <th>PROGRAM NAME</th>
+                            <th>FACULTY</th>
+                            <th>SUBMISSION DATE</th>
+                            <th>STATUS</th>
+                            <th>ASSIGNED EVALUATOR</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsTableBody">
+                        <tr><td colspan="8" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-pulse"></i> Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Modal -->
+    <div id="assignModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Assign Internal Evaluator</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Program:</strong> <span id="modalProgramName"></span>
+                        <p><i class="fas fa-balance-scale"></i> Ensure evaluator has no conflict of interest.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-tie"></i> Select Internal Evaluator *</label>
+                    <select id="evaluatorSelect" required>
+                        <option value="">-- Select Evaluator --</option>
+                    </select>
+                    <small>Must be a qualified JKA/Senate member</small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Expected Completion Date</label>
+                    <input type="date" id="completionDate">
+                    <small>Evaluation should be completed within 30-45 working days</small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> Assignment Notes (Optional)</label>
+                    <textarea id="assignmentNotes" rows="3" placeholder="Special instructions..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" id="confirmAssignBtn" onclick="confirmAssign()">Confirm Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProgramId = null;
+        let currentProgramName = null;
+        let submissions = [];
+        let evaluators = [];
+
+        // ========================================
+        // LOAD SUBMISSIONS
+        // ========================================
+        async function loadSubmissions() {
+            try {
+                const res = await fetch('/api/program-submissions');
+                submissions = await res.json();
+                console.log('✅ Loaded submissions:', submissions.length);
+                
+                submissions.forEach(s => {
+                    console.log(`📊 ${s.program_code}: ${s.status} | Evaluator: ${s.assigned_evaluator_name || 'None'}`);
+                });
+                
+                updateStats();
+                renderTable();
+            } catch (e) {
+                console.error('Error loading submissions:', e);
+                document.getElementById('submissionsTableBody').innerHTML = '<tr><td colspan="8" style="text-align:center; color:#dc3545;">Error loading data</td></tr>';
+            }
+        }
+
+        // ========================================
+        // LOAD EVALUATORS
+        // ========================================
+        async function loadEvaluators() {
+            try {
+                const res = await fetch('/api/evaluators');
+                evaluators = await res.json();
+                document.getElementById('evaluatorCount').innerText = evaluators.length;
+            } catch (e) {
+                console.error('Error loading evaluators:', e);
+            }
+        }
+
+        // ========================================
+        // UPDATE STATS
+        // ========================================
+        function updateStats() {
+            const pending = submissions.filter(s => s.status === 'Pending Review').length;
+            const assigned = submissions.filter(s => s.status === 'Assigned' || s.status === 'Under Review').length;
+            
+            console.log('📊 Stats: Pending=', pending, 'Assigned=', assigned);
+            
+            document.getElementById('pendingCount').innerText = pending;
+            document.getElementById('assignedCount').innerText = assigned;
+        }
+
+        // ========================================
+        // FORMAT FUNCTIONS
+        // ========================================
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-MY');
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'pending';
+            const s = status.toLowerCase().trim();
+            if (s === 'pending review' || s === 'pending') return 'pending';
+            if (s === 'assigned') return 'assigned';
+            if (s === 'under review') return 'in-progress';
+            if (s === 'completed' || s === 'approved') return 'completed';
+            return 'pending';
+        }
+
+        function getStatusText(status) {
+            if (!status) return 'Pending';
+            const s = status.toLowerCase().trim();
+            if (s === 'pending review') return 'Pending';
+            if (s === 'assigned') return 'Assigned';
+            if (s === 'under review') return 'Under Review';
+            if (s === 'completed') return 'Completed';
+            return status;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // ========================================
+        // RENDER TABLE
+        // ========================================
+        function renderTable() {
+            const tbody = document.getElementById('submissionsTableBody');
+            if (!submissions.length) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:40px;">No submissions yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = submissions.map(item => {
+                const actualStatus = item.status || 'Pending Review';
+                const hasEvaluator = item.assigned_evaluator_name && 
+                                    item.assigned_evaluator_name !== 'null' && 
+                                    item.assigned_evaluator_name !== '';
+                
+                const isPending = actualStatus === 'Pending Review';
+                const displayEvaluator = hasEvaluator ? item.assigned_evaluator_name : '<span style="color:#999;">Not assigned</span>';
+                
+                return `
+                <tr data-status="${actualStatus}">
+                    <td><strong>PRG${String(item.id).padStart(4, '0')}</strong></td>
+                    <td><strong>${item.program_code || 'N/A'}</strong></td>
+                    <td>${item.program_name || 'N/A'}</td>
+                    <td>${item.faculty || 'N/A'}</td>
+                    <td>${formatDate(item.submission_date)}</td>
+                    <td><span class="status-pill ${getStatusClass(actualStatus)}">${getStatusText(actualStatus)}</span></td>
+                    <td>${displayEvaluator}</td>
+                    <td class="actions">
+                        ${isPending ? 
+                            `<i class="fas fa-user-plus assign-icon" onclick="openAssignModal(${item.id}, '${escapeHtml(item.program_name)}')" title="Assign Evaluator"></i>` : 
+                            `<i class="fas fa-eye view-icon" onclick="viewAssignment(${item.id})" title="View Assignment"></i>
+                             <i class="fas fa-sync-alt edit-icon" onclick="openAssignModal(${item.id}, '${escapeHtml(item.program_name)}')" title="Reassign"></i>`
+                        }
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ========================================
+        // OPEN ASSIGN MODAL
+        // ========================================
+        function openAssignModal(programId, programName) {
+            currentProgramId = programId;
+            currentProgramName = programName;
+            document.getElementById('modalProgramName').innerText = programName;
+            document.getElementById('completionDate').value = '';
+            document.getElementById('assignmentNotes').value = '';
+            
+            const select = document.getElementById('evaluatorSelect');
+            select.innerHTML = '<option value="">-- Select Evaluator --</option>';
+            evaluators.forEach(e => {
+                select.innerHTML += `<option value="${e.id}">${e.name} (${e.expertise})</option>`;
+            });
+            
+            document.getElementById('assignModal').style.display = 'block';
+        }
+
+        // ========================================
+        // CONFIRM ASSIGNMENT - 100% WORKING
+        // ========================================
+        async function confirmAssign() {
+            const evaluatorId = document.getElementById('evaluatorSelect').value;
+            if (!evaluatorId) {
+                alert('Please select an evaluator');
+                return;
+            }
+            
+            const evaluator = evaluators.find(e => e.id == evaluatorId);
+            const completionDate = document.getElementById('completionDate').value;
+            const notes = document.getElementById('assignmentNotes').value;
+            
+            const confirmBtn = document.getElementById('confirmAssignBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+            
+            try {
+                const res = await fetch(`/api/program-submissions/${currentProgramId}/assign`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        evaluator_id: evaluatorId,
+                        evaluator_name: evaluator.name,
+                        expected_completion_date: completionDate,
+                        assignment_notes: notes
+                    })
+                });
+                
+                const result = await res.json();
+                console.log('📥 Response:', result);
+                
+                if (res.ok && result.success) {
+                    closeModal();
+                    
+                    // FORCE REFRESH DATA
+                    await loadSubmissions();
+                    
+                    alert(`✅ Success!\n\nAssigned: ${evaluator.name}\nProgram: ${currentProgramName}\nStatus changed to "Assigned"`);
+                } else {
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('❌ Error:', err);
+                alert('Error assigning evaluator: ' + err.message);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = 'Confirm Assignment';
+            }
+        }
+
+        // ========================================
+        // VIEW ASSIGNMENT
+        // ========================================
+        async function viewAssignment(programId) {
+            try {
+                const res = await fetch(`/api/program-submissions/${programId}/assignment`);
+                const data = await res.json();
+                alert(`📋 Assignment Details\n\nEvaluator: ${data.assigned_evaluator_name || 'N/A'}\nAssigned Date: ${formatDate(data.assigned_date)}\nExpected Completion: ${formatDate(data.expected_completion_date)}\nStatus: ${data.status}\n\nNotes: ${data.assignment_notes || 'None'}`);
+            } catch (err) {
+                alert('Error loading assignment details');
+            }
+        }
+
+        // ========================================
+        // MODAL CONTROLS
+        // ========================================
+        function closeModal() {
+            document.getElementById('assignModal').style.display = 'none';
+            currentProgramId = null;
+        }
+
+        // ========================================
+        // FILTER TABLE
+        // ========================================
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toUpperCase();
+            const status = document.getElementById('statusFilter').value;
+            const rows = document.getElementById('submissionsTableBody').getElementsByTagName('tr');
+            
+            for (let row of rows) {
+                const text = row.innerText.toUpperCase();
+                const matchSearch = text.includes(search);
+                const matchStatus = !status || text.includes(status.toUpperCase());
+                row.style.display = (matchSearch && matchStatus) ? '' : 'none';
+            }
+        }
+
+        // ========================================
+        // WINDOW EVENTS
+        // ========================================
+        window.onclick = (e) => { if (e.target === document.getElementById('assignModal')) closeModal(); };
+        window.onload = () => { loadSubmissions(); loadEvaluators(); };
+    </script>
+</body>
+</html>

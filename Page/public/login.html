@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | UMT AQAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <!-- Logo / Header -->
+            <div class="login-header">
+                <div class="logo-icon">🎓</div>
+                <h1>UMT AQAS</h1>
+                <p>Academic Quality Assurance System</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required />
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required />
+                </div>
+
+                <div id="errorMessage" class="error-msg" style="display:none;">
+                    <i class="fas fa-exclamation-circle"></i> <span id="errorText">Invalid credentials</span>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Demo Credentials -->
+            <div class="demo-section">
+                <p class="demo-title"><i class="fas fa-users"></i> Demo Sign In</p>
+                <div class="demo-grid">
+
+                    <!-- Head Program -->
+                    <div class="demo-card hp" onclick="fillCredentials('wnjawahir@umt.edu.my', 'password123')">
+                        <div class="demo-avatar">👨‍🏫</div>
+                        <div class="demo-info">
+                            <strong>Head Program</strong>
+                            <span>Submit &amp; track programme proposals</span>
+                            <small>wnjawahir@umt.edu.my / password123</small>
+                        </div>
+                    </div>
+
+                    <!-- Internal Evaluator -->
+                    <div class="demo-card ev" onclick="fillCredentials('msuzuri@umt.edu.my', 'password123')">
+                        <div class="demo-avatar">📋</div>
+                        <div class="demo-info">
+                            <strong>Internal Evaluator</strong>
+                            <span>Review &amp; evaluate programmes</span>
+                            <small>msuzuri@umt.edu.my / password123</small>
+                        </div>
+                    </div>
+
+                    <!-- QA Senior Executive -->
+                    <div class="demo-card qa" onclick="fillCredentials('madnor@umt.edu.my', 'password123')">
+                        <div class="demo-avatar">👤</div>
+                        <div class="demo-info">
+                            <strong>QA Senior Executive</strong>
+                            <span>Manage accreditation &amp; reports</span>
+                            <small>madnor@umt.edu.my / password123</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p>© 2026 UMT Academic Quality Assurance System</p>
+                <p>Faculty of Computer Science and Mathematics (FSKM)</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // HARDCODE USERS (FRONTEND ONLY)
+        // ========================================
+        const USERS = {
+            'wnjawahir@umt.edu.my': {
+                password: 'password123',
+                full_name: 'Prof. Madya Ts. Dr. Wan Nural Jawahir binti Hj Wan Yussof',
+                role: 'head_program',
+                faculty: 'FSKM'
+            },
+            'msuzuri@umt.edu.my': {
+                password: 'password123',
+                full_name: 'Prof. Madya Dr. Muhammad Suzuri bin Hitam',
+                role: 'internal_evaluator',
+                faculty: 'FSM'
+            },
+            'madnor@umt.edu.my': {
+                password: 'password123',
+                full_name: 'Dr. Mad Nor bin Hassan',
+                role: 'qa_executive',
+                faculty: 'PPPK'
+            }
+        };
+
+        // ========================================
+        // FILL CREDENTIALS FUNCTION
+        // ========================================
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            document.getElementById('errorMessage').style.display = 'none';
+
+            // Highlight effect
+            const cards = document.querySelectorAll('.demo-card');
+            cards.forEach(c => c.style.borderColor = '#e0e0e0');
+            if (event && event.currentTarget) {
+                event.currentTarget.style.borderColor = '#667eea';
+            }
+        }
+
+        // ========================================
+        // LOGIN FORM SUBMIT
+        // ========================================
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+
+            if (!email || !password) {
+                errorText.textContent = 'Please enter both email and password';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Check user in hardcoded USERS
+            const user = USERS[email];
+            
+            if (!user) {
+                errorText.textContent = 'User not found';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== user.password) {
+                errorText.textContent = 'Invalid password';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // ✅ LOGIN SUCCESS - Store user in sessionStorage
+            sessionStorage.setItem('user', JSON.stringify({
+                email: email,
+                full_name: user.full_name,
+                role: user.role,
+                faculty: user.faculty,
+                loggedIn: true
+            }));
+
+            // Redirect based on role
+            const redirectMap = {
+                'head_program': '/dashboard.html',
+                'internal_evaluator': '/dashboard.html',
+                'qa_executive': '/dashboard.html'
+            };
+
+            window.location.href = redirectMap[user.role] || '/dashboard.html';
+        });
+
+        // ========================================
+        // ENTER KEY SUPPORT
+        // ========================================
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // ========================================
+        // LOGOUT FUNCTION - Global
+        // ========================================
+        window.logoutUser = function() {
+            sessionStorage.removeItem('user');
+            window.location.href = '/login.html';
+        };
+    </script>
+
+</body>
+</html>

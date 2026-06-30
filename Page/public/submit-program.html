@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Program for Internal Evaluation | UMT AQAS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/submit-program.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2" id="pageTitle">
+                        <i class="fas fa-file-upload me-2"></i>Submit Program for Internal Evaluation
+                    </h1>
+                    <p class="lead mb-2">UMT Academic Quality Assurance System (AQAS)</p>
+                    <p>Prepare and submit academic program details for internal quality assurance review</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <span class="mqa-badge">
+                        <i class="fas fa-check-circle"></i> MQA COPPA Standards Compliant
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Process Info -->
+        <div class="alert alert-info mb-4">
+            <div class="d-flex">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading">Internal Evaluation Process</h5>
+                    <p class="mb-0">This submission prepares your program for <strong>UMT's internal quality review</strong> before official submission to MQA. All information must align with <a href="https://www.mqa.gov.my/garispanduan/COPPAv2.cfm" target="_blank" class="alert-link">MQA COPPA Standards</a> and <a href="https://www.mqa.gov.my/mqr/" target="_blank" class="alert-link">Malaysian Qualifications Framework (MQF)</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <form id="programSubmissionForm" action="/submit-program" method="POST" enctype="multipart/form-data">
+            
+            <!-- SECTION 1: PROGRAM IDENTIFICATION -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-id-card me-2"></i>1. Program Identification
+                </h3>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="coppa-standard">
+                            <strong>COPPA Standard 1:</strong> Programme Development & Delivery
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="coppa-standard">
+                            <strong>Note:</strong> Program information will be retrieved  
+                            from the Program Registration Module (developed by team member)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label required">Program Code</label>
+                        <input type="text" class="form-control" name="program_code" placeholder="e.g., CS4001" required>
+                        <div class="form-note">Official program code assigned by university</div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label required">Program Name</label>
+                        <input type="text" class="form-control" name="program_name" placeholder="e.g., Bachelor of Computer Science" required>
+                        <div class="form-note">Full program name as it will appear on certificates</div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label required">MQF Level</label>
+                        <select class="form-select" name="mqf_level" required>
+                            <option value="">Select MQF Level</option>
+                            <option value="4">Level 4 - Certificate</option>
+                            <option value="5">Level 5 - Diploma</option>
+                            <option value="6">Level 6 - Bachelor's Degree</option>
+                            <option value="7">Level 7 - Master's Degree</option>
+                            <option value="8">Level 8 - Doctoral Degree</option>
+                        </select>
+                        <div class="form-note"><a href="https://www.mqa.gov.my/mqr/" target="_blank">Malaysian Qualifications Framework</a></div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label required">Field of Study</label>
+                        <select class="form-select" name="field_of_study" required>
+                            <option value="">Select Field</option>
+                            <option value="Computing">Computing</option>
+                            <option value="Engineering & Engineering Trades">Engineering & Engineering Trades</option>
+                            <option value="Business & Administration">Business & Administration</option>
+                            <option value="Natural Sciences">Natural Sciences</option>
+                            <option value="Social Sciences">Social Sciences</option>
+                            <option value="Health">Health</option>
+                            <option value="Education">Education</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label required">Mode of Study</label>
+                        <select class="form-select" name="mode_of_study" required>
+                            <option value="">Select Mode</option>
+                            <option value="Full Time">Full Time</option>
+                            <option value="Part Time">Part Time</option>
+                            <option value="Distance Learning">Distance Learning</option>
+                            <option value="Mixed Mode">Mixed Mode</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Duration (Years)</label>
+                        <input type="number" class="form-control" name="duration_years" min="1" max="10" step="0.5" placeholder="e.g., 3.5" required>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Total Credit Hours</label>
+                        <input type="number" class="form-control" name="credit_hours" min="1" placeholder="e.g., 120" required>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Medium of Instruction</label>
+                        <select class="form-select" name="medium_of_instruction" required>
+                            <option value="">Select Language</option>
+                            <option value="English">English</option>
+                            <option value="Bahasa Malaysia">Bahasa Malaysia</option>
+                            <option value="Bilingual">Bilingual (English & BM)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Faculty</label>
+                        <select class="form-select" name="faculty" required>
+                            <option value="">Select Faculty</option>
+                            <option value="Faculty of Computer Science and Mathematics">Faculty of Computer Science and Mathematics</option>
+                            <option value="Faculty of Science and Marine Environment">Faculty of Science and Marine Environment</option>
+                            <option value="Faculty of Fisheries and Food Science">Faculty of Fisheries and Food Science</option>
+                            <option value="Faculty of Business, Economics and Social Development">Faculty of Business, Economics and Social Development</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: PROGRAM EDUCATIONAL OBJECTIVES (PEOs) -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-bullseye me-2"></i>2. Program Educational Objectives (PEOs)
+                </h3>
+                
+                <div class="coppa-standard mb-3">
+                    <strong>COPPA Standard 1.2:</strong> Programme aims and objectives must be clearly defined and aligned with institutional mission
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label required">Program Educational Objectives</label>
+                    <p class="text-muted mb-2">State what graduates are expected to achieve within 3-5 years after graduation</p>
+                    
+                    <div class="plo-container">
+                        <div class="plo-item">
+                            <div class="plo-number">1</div>
+                            <textarea class="form-control" name="peo_1" rows="2" placeholder="PEO 1: [e.g., To produce competent computer science professionals who can apply knowledge ethically...]" required></textarea>
+                        </div>
+                        <div class="plo-item">
+                            <div class="plo-number">2</div>
+                            <textarea class="form-control" name="peo_2" rows="2" placeholder="PEO 2: [e.g., To develop graduates with research and innovation capabilities...]" required></textarea>
+                        </div>
+                        <div class="plo-item">
+                            <div class="plo-number">3</div>
+                            <textarea class="form-control" name="peo_3" rows="2" placeholder="PEO 3: [e.g., To nurture graduates with leadership qualities and social responsibility...]" required></textarea>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addPEO()">
+                            <i class="fas fa-plus me-1"></i>Add Another PEO
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PROGRAM LEARNING OUTCOMES (PLOs) -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-graduation-cap"></i> 3. Program Learning Outcomes (PLOs)
+                </h3>
+                
+                <div class="coppa-standard">
+                    <strong>COPPA Standard 1.3:</strong> Programme learning outcomes must be aligned with MQF learning outcomes domains
+                </div>
+                
+                <p class="mb-3">Define PLO1 to PLO11 - what students should know, be able to do, and value upon graduation</p>
+                
+                <div class="plo-table-container">
+                    <table class="table" id="ploTable">
+                        <thead>
+                            <tr>
+                                <th width="10%">PLO</th>
+                                <th width="40%">Description *</th>
+                                <th width="25%">Learning Outcome Domain *</th>
+                                <th width="25%">Learning Domain *</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="align-middle"><span class="plo-number">PLO1</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo1_desc" rows="2" placeholder="Describe PLO1..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo1_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo1_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO2</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo2_desc" rows="2" placeholder="Describe PLO2..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo2_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo2_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO3</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo3_desc" rows="2" placeholder="Describe PLO3..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo3_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo3_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO4</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo4_desc" rows="2" placeholder="Describe PLO4..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo4_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo4_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO5</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo5_desc" rows="2" placeholder="Describe PLO5..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo5_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo5_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO6</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo6_desc" rows="2" placeholder="Describe PLO6..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo6_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo6_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO7</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo7_desc" rows="2" placeholder="Describe PLO7..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo7_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo7_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO8</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo8_desc" rows="2" placeholder="Describe PLO8..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo8_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo8_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO9</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo9_desc" rows="2" placeholder="Describe PLO9..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo9_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo9_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO10</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo10_desc" rows="2" placeholder="Describe PLO10..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo10_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo10_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                            <tr><td class="align-middle"><span class="plo-number">PLO11</span></td>
+                            <td><textarea class="form-control form-control-sm" name="plo11_desc" rows="2" placeholder="Describe PLO11..."></textarea></td>
+                            <td><select class="form-select form-select-sm" name="plo11_outcome_domain"><option value="">Select</option><option value="Knowledge">Knowledge</option><option value="Practical Skills">Practical Skills</option><option value="Critical Thinking">Critical Thinking</option><option value="Communication">Communication</option><option value="Teamwork">Teamwork</option></select></td>
+                            <td><select class="form-select form-select-sm" name="plo11_learning_domain"><option value="">Select</option><option value="Cognitive">Cognitive</option><option value="Psychomotor">Psychomotor</option><option value="Affective">Affective</option></select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert-box warning mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Note:</strong> Ensure PLOs cover all MQF learning domains: 
+                    <strong>Cognitive (Knowledge)</strong>, 
+                    <strong>Psychomotor (Practical Skills)</strong>, and 
+                    <strong>Affective (Social Skills & Values)</strong>
+                </div>
+            </div>
+
+            <!-- SECTION 4: CURRICULUM STRUCTURE -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-sitemap me-2"></i>4. Curriculum Structure
+                </h3>
+                
+                <div class="coppa-standard mb-3">
+                    <strong>COPPA Standard 2:</strong> Curriculum Design & Delivery
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Compulsory Courses</label>
+                        <input type="number" class="form-control" name="compulsory_courses" min="0" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Core Computing Courses</label>
+                        <input type="number" class="form-control" name="core_computing_courses" min="0" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Discipline Core Courses</label>
+                        <input type="number" class="form-control" name="discipline_core_courses" min="0" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Industrial Training</label>
+                        <input type="number" class="form-control" name="industrial_training" min="0" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Free Electives</label>
+                        <input type="number" class="form-control" name="free_electives" min="0">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Project Credits</label>
+                        <input type="number" class="form-control" name="project_credits" min="0" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label required">Subtotal Credits</label>
+                        <input type="number" class="form-control" name="subtotal_credits" min="1" required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label required">Curriculum Structure Description</label>
+                    <textarea class="form-control" name="curriculum_structure" rows="4" placeholder="Describe the overall curriculum structure..." required></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Teaching-Learning Methods (%)</label>
+                    <div class="row">
+                        <div class="col-md-3"><input type="number" class="form-control" name="tl_lecture" placeholder="Lecture %"></div>
+                        <div class="col-md-3"><input type="number" class="form-control" name="tl_tutorial" placeholder="Tutorial %"></div>
+                        <div class="col-md-3"><input type="number" class="form-control" name="tl_lab" placeholder="Lab %"></div>
+                        <div class="col-md-3"><input type="number" class="form-control" name="tl_project" placeholder="Project %"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5: ASSESSMENT METHODS -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-clipboard-check me-2"></i>5. Assessment Methods
+                </h3>
+                
+                <div class="coppa-standard mb-3">
+                    <strong>COPPA Standard 9:</strong> Student Assessment
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label required">Assessment Strategy</label>
+                    <textarea class="form-control" name="assessment_strategy" rows="3" placeholder="Describe assessment strategy..." required></textarea>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6"><label>Continuous Assessment (%)</label><input type="number" class="form-control" name="assessment_continuous"></div>
+                    <div class="col-md-6"><label>Final Examination (%)</label><input type="number" class="form-control" name="assessment_final"></div>
+                </div>
+            </div>
+
+            <!-- SECTION 6: SUPPORTING DOCUMENTS -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-folder-open me-2"></i>6. Supporting Documents
+                </h3>
+                
+                <div class="coppa-checklist mb-4">
+                    <h6 class="mb-3">MQA Document Checklist (Required for Internal Evaluation)</h6>
+                    <div class="checklist-item"><div class="form-check"><input class="form-check-input" type="checkbox" id="doc1" name="doc_proposal"><label class="form-check-label" for="doc1"><strong>Program Proposal Document</strong> - Approved by Senate/JKA</label></div></div>
+                    <div class="checklist-item"><div class="form-check"><input class="form-check-input" type="checkbox" id="doc2" name="doc_syllabi"><label class="form-check-label" for="doc2"><strong>Detailed Course Syllabi</strong> - All courses with learning outcomes</label></div></div>
+                    <div class="checklist-item"><div class="form-check"><input class="form-check-input" type="checkbox" id="doc3" name="doc_staff_cv"><label class="form-check-label" for="doc3"><strong>Academic Staff CVs & Qualifications</strong></label></div></div>
+                    <div class="checklist-item"><div class="form-check"><input class="form-check-input" type="checkbox" id="doc4" name="doc_sar"><label class="form-check-label" for="doc4"><strong>Program Self-Assessment Report (SAR)</strong></label></div></div>
+                    <div class="checklist-item"><div class="form-check"><input class="form-check-input" type="checkbox" id="doc5" name="doc_facilities"><label class="form-check-label" for="doc5"><strong>Facilities & Resources Documentation</strong></label></div></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Upload Supporting Documents</label>
+                    <div class="file-upload-area" onclick="document.getElementById('fileUpload').click()">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h5>Click or drag files to upload</h5>
+                        <p class="text-muted">Maximum file size: 10MB each. Supported formats: PDF, DOC, DOCX</p>
+                    </div>
+                    <input type="file" id="fileUpload" name="documents" multiple style="display: none;" onchange="handleFileUpload()" accept=".pdf,.doc,.docx">
+                    <div class="file-list mt-3" id="uploadedFiles"></div>
+                </div>
+                
+                <!-- Existing uploaded files display (for edit mode) -->
+                <div id="existingFilesSection" style="display:none; margin-top: 20px;">
+                    <label class="form-label">Existing Uploaded Files:</label>
+                    <div id="existingFilesList" class="file-list"></div>
+                </div>
+            </div>
+
+            <!-- SECTION 7: COMPLIANCE DECLARATION -->
+            <div class="section-card">
+                <h3 class="section-title">
+                    <i class="fas fa-file-signature me-2"></i>7. Compliance Submission  
+                </h3>
+                
+                <div class="alert alert-light border">
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="declaration1" name="declaration_accuracy" required><label class="form-check-label" for="declaration1">I certify that all information provided is accurate and complete.</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="declaration2" name="declaration_compliance" required><label class="form-check-label" for="declaration2">The program details align with MQF and MQA COPPA Standards.</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="declaration3" name="declaration_authentic" required><label class="form-check-label" for="declaration3">All supporting documents are authentic.</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="declaration4" name="declaration_understanding" required><label class="form-check-label" for="declaration4">I understand this submission will be reviewed internally.</label></div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6"><label class="form-label required">Head Program Name</label><input type="text" class="form-control" name="head_program_name" required></div>
+                    <div class="col-md-6"><label class="form-label required">Date of Submission</label><input type="date" class="form-control" name="submission_date" required></div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex justify-content-between mt-4 mb-5">
+                <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print Preview
+                </button>
+                <button type="submit" class="btn btn-umt" id="submitBtn">
+                    <i class="fas fa-paper-plane me-2"></i>Submit for Internal Evaluation
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>UMT Academic Quality Assurance System</h5>
+                    <p class="mb-1">Universiti Malaysia Terengganu</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-1">References: MQA COPPA Standards v2.0, MQF 2nd Edition</p>
+                    <p class="mb-0">© 2024 UMT Quality Assurance Unit</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let uploadedFiles = [];
+        let removedFileNames = [];
+
+        function handleFileUpload() {
+            const fileInput = document.getElementById('fileUpload');
+            const fileList = document.getElementById('uploadedFiles');
+            
+            for (let file of fileInput.files) {
+                uploadedFiles.push(file);
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                    <span>${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
+                    <i class="fas fa-trash text-danger ms-auto" style="cursor:pointer" onclick="this.parentElement.remove(); uploadedFiles = uploadedFiles.filter(f => f.name !== '${file.name}')"></i>
+                `;
+                fileList.appendChild(fileItem);
+            }
+            fileInput.value = '';
+        }
+        
+        function addPEO() {
+            const container = document.querySelector('.plo-container');
+            const peoCount = document.querySelectorAll('.plo-item').length + 1;
+            const newPEO = document.createElement('div');
+            newPEO.className = 'plo-item';
+            newPEO.innerHTML = `<div class="plo-number">${peoCount}</div><textarea class="form-control" name="peo_${peoCount}" rows="2" placeholder="PEO ${peoCount}: ..."></textarea><button type="button" class="btn btn-outline-danger btn-sm ms-2" onclick="this.parentElement.remove()">✖</button>`;
+            container.insertBefore(newPEO, container.lastElementChild);
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+        
+        if (editId) {
+            document.getElementById('pageTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Edit Program Submission';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Submission';
+            submitBtn.style.backgroundColor = '#f59e0b';
+            
+            fetch(`/api/program-submissions/${editId}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Populate all form fields
+                    document.querySelector('[name="program_code"]').value = data.program_code || '';
+                    document.querySelector('[name="program_name"]').value = data.program_name || '';
+                    document.querySelector('[name="mqf_level"]').value = data.mqf_level || '';
+                    document.querySelector('[name="field_of_study"]').value = data.field_of_study || '';
+                    document.querySelector('[name="mode_of_study"]').value = data.mode_of_study || '';
+                    document.querySelector('[name="duration_years"]').value = data.duration_years || '';
+                    document.querySelector('[name="credit_hours"]').value = data.credit_hours || '';
+                    document.querySelector('[name="medium_of_instruction"]').value = data.medium_of_instruction || '';
+                    document.querySelector('[name="faculty"]').value = data.faculty || '';
+                    document.querySelector('[name="peo_1"]').value = data.peo_1 || '';
+                    document.querySelector('[name="peo_2"]').value = data.peo_2 || '';
+                    document.querySelector('[name="peo_3"]').value = data.peo_3 || '';
+                    
+                    for (let i = 1; i <= 11; i++) {
+                        const descField = document.querySelector(`[name="plo${i}_desc"]`);
+                        const outcomeField = document.querySelector(`[name="plo${i}_outcome_domain"]`);
+                        const learningField = document.querySelector(`[name="plo${i}_learning_domain"]`);
+                        if (descField) descField.value = data[`plo${i}_desc`] || '';
+                        if (outcomeField) outcomeField.value = data[`plo${i}_outcome_domain`] || '';
+                        if (learningField) learningField.value = data[`plo${i}_learning_domain`] || '';
+                    }
+                    
+                    document.querySelector('[name="compulsory_courses"]').value = data.compulsory_courses || '';
+                    document.querySelector('[name="core_computing_courses"]').value = data.core_computing_courses || '';
+                    document.querySelector('[name="discipline_core_courses"]').value = data.discipline_core_courses || '';
+                    document.querySelector('[name="industrial_training"]').value = data.industrial_training || '';
+                    document.querySelector('[name="free_electives"]').value = data.free_electives || '';
+                    document.querySelector('[name="project_credits"]').value = data.project_credits || '';
+                    document.querySelector('[name="subtotal_credits"]').value = data.subtotal_credits || '';
+                    document.querySelector('[name="curriculum_structure"]').value = data.curriculum_structure || '';
+                    document.querySelector('[name="tl_lecture"]').value = data.tl_lecture || '';
+                    document.querySelector('[name="tl_tutorial"]').value = data.tl_tutorial || '';
+                    document.querySelector('[name="tl_lab"]').value = data.tl_lab || '';
+                    document.querySelector('[name="tl_project"]').value = data.tl_project || '';
+                    document.querySelector('[name="assessment_strategy"]').value = data.assessment_strategy || '';
+                    document.querySelector('[name="assessment_continuous"]').value = data.assessment_continuous || '';
+                    document.querySelector('[name="assessment_final"]').value = data.assessment_final || '';
+                    document.querySelector('[name="head_program_name"]').value = data.head_program_name || '';
+                    document.querySelector('[name="submission_date"]').value = data.submission_date || '';
+                    
+                    if (data.doc_proposal) document.getElementById('doc1').checked = true;
+                    if (data.doc_syllabi) document.getElementById('doc2').checked = true;
+                    if (data.doc_staff_cv) document.getElementById('doc3').checked = true;
+                    if (data.doc_sar) document.getElementById('doc4').checked = true;
+                    if (data.doc_facilities) document.getElementById('doc5').checked = true;
+                    if (data.declaration_accuracy) document.getElementById('declaration1').checked = true;
+                    if (data.declaration_compliance) document.getElementById('declaration2').checked = true;
+                    if (data.declaration_authentic) document.getElementById('declaration3').checked = true;
+                    if (data.declaration_understanding) document.getElementById('declaration4').checked = true;
+                    
+                    // Load existing files
+                    if (data.uploaded_files) {
+                        const existingFiles = JSON.parse(data.uploaded_files);
+                        if (existingFiles.length > 0) {
+                            const existingSection = document.getElementById('existingFilesSection');
+                            existingSection.style.display = 'block';
+                            const existingList = document.getElementById('existingFilesList');
+                            existingList.innerHTML = '';
+                            existingFiles.forEach(file => {
+                                const fileItem = document.createElement('div');
+                                fileItem.className = 'file-item';
+                                fileItem.innerHTML = `
+                                    <i class="fas fa-file-pdf text-primary me-2"></i>
+                                    <a href="/uploads/${file}" target="_blank" style="flex:1; color:#0066A1;">${file}</a>
+                                    <i class="fas fa-trash text-danger ms-auto" style="cursor:pointer" onclick="this.parentElement.remove(); removedFileNames.push('${file}')"></i>
+                                `;
+                                existingList.appendChild(fileItem);
+                            });
+                        }
+                    }
+                });
+            
+            const form = document.getElementById('programSubmissionForm');
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                // Append new files
+                for (let file of uploadedFiles) {
+                    formData.append('documents', file);
+                }
+                
+                // Handle removed existing files
+                if (removedFileNames.length > 0) {
+                    formData.append('remove_files', JSON.stringify(removedFileNames));
+                }
+                
+                try {
+                    const response = await fetch(`/api/program-submissions/${editId}`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        window.location.href = 'view-submissions.html';
+                    } else {
+                        const error = await response.text();
+                        alert('Error updating submission: ' + error);
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    alert('Error updating submission');
+                }
+            };
+        }
+    </script>
+</body>
+</html>

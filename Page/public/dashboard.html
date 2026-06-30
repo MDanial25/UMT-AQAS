@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | UMT AQAS</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>🎓 UMT AQAS</h2>
+            </div>
+            <ul class="menu">
+                <li class="active" onclick="location.href='dashboard.html'">
+                    <span>📊</span> Dashboard
+                </li>
+                <li onclick="location.href='internal-evaluation.html'">
+                    <span>📋</span> Internal Evaluation
+                </li>
+                <li onclick="location.href='view-submissions.html'">
+                    <span>📝</span> Submit Program Details
+                </li>
+                <li onclick="location.href='view-submissions.html'">
+                    <span>📋</span> View Submissions
+                </li>
+                <li onclick="location.href='assign-evaluator.html'">
+                    <span>👥</span> Assign Evaluator
+                </li>
+                <li onclick="location.href='payment-certificate.html'">
+                    <span>💳</span> Payment & Certificate
+                </li>
+                <li onclick="location.href='reporting.html'">
+                    <span>📈</span> Reporting
+                </li>
+                <li class="logout" onclick="location.href='login.html'">
+                    <span>🚪</span> Logout
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Welcome to UMT Academic Quality Assurance System</p>
+                </div>
+                <div class="user-info">
+                    <span>👤 Users</span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="cards">
+                <div class="card blue" onclick="location.href='internal-evaluation.html'" style="cursor:pointer">
+                    <div class="card-icon">📋</div>
+                    <div class="card-content">
+                        <h3>Total Evaluations</h3>
+                        <h2 id="eval-count">0</h2>
+                        <p>Click to manage</p>
+                    </div>
+                </div>
+
+                <div class="card green">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-content">
+                        <h3>Average Score</h3>
+                        <h2 id="avg-score">0.0%</h2>
+                        <p>Quality metrics</p>
+                    </div>
+                </div>
+
+                <div class="card purple">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <h3>Completed</h3>
+                        <h2 id="completed-count">0</h2>
+                        <p>Evaluations done</p>
+                    </div>
+                </div>
+
+                <div class="card orange">
+                    <div class="card-icon">📄</div>
+                    <div class="card-content">
+                        <h3>Reports</h3>
+                        <h2>Generate</h2>
+                        <p>View analytics</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="location.href='submit-program.html'">
+                        ➕ Submit Program Details
+                    </button>
+                    <button class="action-btn" onclick="location.href='add-evaluation.html'">
+                        ➕ New Evaluation
+                    </button>
+                    <button class="action-btn" onclick="location.href='internal-evaluation.html'">
+                        📋 View All Evaluations
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load dashboard statistics
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                
+                document.getElementById('eval-count').innerText = data.totalEvaluations;
+                document.getElementById('avg-score').innerText = Number(data.avgScore).toFixed(1) + "%";
+                document.getElementById('completed-count').innerText = data.totalEvaluations;
+            } catch (e) {
+                console.error('Error loading stats:', e);
+            }
+        }
+
+        // Load stats when page loads
+        window.onload = loadStats;
+    </script>
+</body>
+</html>

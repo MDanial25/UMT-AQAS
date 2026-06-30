@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment & Certificate Tracking | UMT AQAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="css/payment-certificate.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo"><h2>🎓 UMT AQAS</h2></div>
+            <ul class="menu">
+                <li onclick="location.href='dashboard.html'"><span>📊</span> Dashboard</li>
+                <li onclick="location.href='internal-evaluation.html'"><span>📋</span> Internal Evaluation</li>
+                <li onclick="location.href='submit-program.html'"><span>📝</span> Submit Program Details</li>
+                <li onclick="location.href='view-submissions.html'"><span>📄</span> View Submissions</li>
+                <li onclick="location.href='assign-evaluator.html'"><span>👥</span> Assign Evaluator</li>
+                <li class="active"><span>💳</span> Payment & Certificate</li>
+                <li onclick="location.href='reporting.html'"><span>📈</span> Reporting</li>
+                <li class="logout" onclick="location.href='login.html'"><span>🚪</span> Logout</li>
+            </ul>
+        </div>
+
+        <div class="main">
+            <div class="header-section">
+                <div>
+                    <h1>Payment & Certificate Tracking</h1>
+                    <p>Track accreditation payments and certificate information for PA and FA</p>
+                </div>
+                <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus"></i> New Record</button>
+            </div>
+
+            <div class="stats-cards">
+                <div class="card blue"><div class="card-icon">🏛️</div><div class="card-content"><h3>Total Programs</h3><h2 id="totalPrograms">0</h2><p>With accreditation</p></div></div>
+                <div class="card purple"><div class="card-icon">📜</div><div class="card-content"><h3>Provisional (PA)</h3><h2 id="paCount">0</h2><p>Active / Pending</p></div></div>
+                <div class="card green"><div class="card-icon">🏆</div><div class="card-content"><h3>Full (FA)</h3><h2 id="faCount">0</h2><p>Accredited</p></div></div>
+                <div class="card orange"><div class="card-icon">💰</div><div class="card-content"><h3>Total Payment</h3><h2 id="totalPayment">RM0</h2><p>Collected</p></div></div>
+            </div>
+
+            <div class="coppa-info">
+                <i class="fas fa-info-circle"></i>
+                <div><strong>MQA COPPA Standard 10:</strong> Accreditation Process & Quality Assurance<br><small>Provisional Accreditation (PA) is granted for new programs. Full Accreditation (FA) is granted after program maturity.</small></div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-input"><i class="fa fa-search"></i><input type="text" id="searchInput" placeholder="Search..." onkeyup="filterTable()"></div>
+                <div class="filter-group"><select id="typeFilter" onchange="filterTable()"><option value="">All Types</option><option value="PA">PA</option><option value="FA">FA</option></select></div>
+                <div class="filter-group"><select id="statusFilter" onchange="filterTable()"><option value="">All Status</option><option value="Active">Active</option><option value="Expired">Expired</option></select></div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>REF</th><th>PROGRAM</th><th>TYPE</th><th>CERTIFICATE NO.</th><th>VALIDITY</th><th>PAYMENT</th><th>RECEIPT</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+                    <tbody id="accreditationTableBody"><tr><td colspan="9" style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-pulse"></i> Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="accreditationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2><i class="fas fa-file-invoice"></i> <span id="modalTitle">Accreditation Record</span></h2><span class="close" onclick="closeModal()">&times;</span></div>
+            <div class="modal-body">
+                <div class="form-group"><label><i class="fas fa-graduation-cap"></i> Program *</label><select id="programSelect" required><option value="">-- Select Program --</option></select><small>Programs that have completed internal evaluation</small></div>
+                <div class="form-group"><label><i class="fas fa-tag"></i> Accreditation Type *</label>
+                    <div class="radio-group"><label class="radio-label"><input type="radio" name="accreditationType" value="PA" checked> <span>📜 Provisional (PA)</span></label><label class="radio-label"><input type="radio" name="accreditationType" value="FA"> <span>🏆 Full (FA)</span></label></div>
+                </div>
+                <div class="form-group"><label><i class="fas fa-certificate"></i> Certificate Number *</label><input type="text" id="certNumber" placeholder="e.g., MQA/PA1234/2024" required></div>
+                <div class="row-2cols"><div class="form-group"><label><i class="fas fa-calendar-alt"></i> Issue Date *</label><input type="date" id="issueDate" required></div><div class="form-group"><label><i class="fas fa-calendar-times"></i> Expiry Date *</label><input type="date" id="expiryDate" required></div></div>
+                <div class="form-section"><h4><i class="fas fa-money-bill-wave"></i> Payment Details</h4>
+                    <div class="row-2cols"><div class="form-group"><label><i class="fas fa-calendar-day"></i> Payment Date *</label><input type="date" id="paymentDate" required></div><div class="form-group"><label><i class="fas fa-dollar-sign"></i> Amount (RM) *</label><input type="number" id="paymentAmount" step="0.01" placeholder="0.00" required></div></div>
+                    <div class="form-group"><label><i class="fas fa-receipt"></i> Payment Reference</label><input type="text" id="paymentRef" placeholder="e.g., BILL-001234"></div>
+                    <div class="form-group"><label><i class="fas fa-file-pdf"></i> Upload Receipt (Optional)</label>
+                        <div class="file-upload-area" onclick="document.getElementById('receiptUpload').click()"><i class="fas fa-cloud-upload-alt"></i><span>Click to upload receipt (PDF only)</span></div>
+                        <input type="file" id="receiptUpload" accept=".pdf" style="display:none" onchange="handleReceiptUpload()">
+                        <div id="receiptFileName" class="file-info"></div>
+                    </div>
+                    <div class="form-group"><label><i class="fas fa-sticky-note"></i> Payment Notes</label><textarea id="paymentNotes" rows="2" placeholder="Additional payment information..."></textarea></div>
+                </div>
+                <div id="existingReceiptSection" style="display:none;"><div class="form-group"><label><i class="fas fa-file-pdf"></i> Current Receipt</label><div id="existingReceiptFile" class="file-info"></div></div></div>
+            </div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="closeModal()">Cancel</button><button class="btn-primary" onclick="saveRecord()">Save Record</button></div>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h2><i class="fas fa-file-alt"></i> Accreditation Details</h2><span class="close" onclick="closeViewModal()">&times;</span></div>
+            <div class="modal-body" id="viewModalBody"></div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="closeViewModal()">Close</button><button class="btn-primary" onclick="editFromView()">Edit Record</button><button class="btn-primary" id="generateReceiptBtn" onclick="generateReceiptFromView()" style="background:#f59e0b;">Generate Receipt</button></div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditId = null;
+        let accreditationData = [];
+        let uploadedReceipt = null;
+        let existingReceiptFile = null;
+        let removeReceipt = false;
+        let currentViewRecord = null;
+
+        async function loadAccreditationData() {
+            try {
+                const res = await fetch('/api/accreditation');
+                if (res.ok) accreditationData = await res.json();
+                else accreditationData = [];
+                updateStats();
+                renderTable();
+                loadProgramsForSelect();
+            } catch (e) { console.error('Error:', e); }
+        }
+
+        async function loadProgramsForSelect() {
+            try {
+                const res = await fetch('/api/program-submissions');
+                const programs = await res.json();
+                const select = document.getElementById('programSelect');
+                select.innerHTML = '<option value="">-- Select Program --</option>';
+                programs.forEach(p => {
+                    select.innerHTML += `<option value="${p.id}" data-code="${p.program_code}" data-name="${p.program_name}">${p.program_code} - ${p.program_name}</option>`;
+                });
+            } catch (e) { console.error('Error:', e); }
+        }
+
+        function updateStats() {
+            const total = accreditationData.length;
+            const pa = accreditationData.filter(a => a.accreditation_type === 'PA').length;
+            const fa = accreditationData.filter(a => a.accreditation_type === 'FA').length;
+            const totalPayment = accreditationData.reduce((sum, a) => sum + (parseFloat(a.payment_amount) || 0), 0);
+            document.getElementById('totalPrograms').innerText = total;
+            document.getElementById('paCount').innerText = pa;
+            document.getElementById('faCount').innerText = fa;
+            document.getElementById('totalPayment').innerText = 'RM' + totalPayment.toLocaleString();
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const d = new Date(dateString);
+            return d.toLocaleDateString('en-MY');
+        }
+
+        function formatInputDate(dateString) {
+            if (!dateString) return '';
+            return String(dateString).split('T')[0];
+        }
+
+        function isExpired(expiryDate) {
+            return new Date(expiryDate) < new Date();
+        }
+
+        function receiptUrl(fileName) {
+            return `/uploads/${encodeURIComponent(fileName)}`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('accreditationTableBody');
+            if (accreditationData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;">No records yet. Click "New Record" to add.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = accreditationData.map(item => {
+                const daysLeft = Math.ceil((new Date(item.expiry_date) - new Date()) / (86400000));
+                return `
+                    <tr>
+                        <td><strong>ACC${String(item.id).padStart(4, '0')}</strong></td>
+                        <td><strong>${item.program_code || 'N/A'}</strong><br><small style="color:#666;">${item.program_name || 'N/A'}</small></td>
+                        <td><span class="type-badge ${item.accreditation_type === 'PA' ? 'pa' : 'fa'}">${item.accreditation_type}</span></td>
+                        <td><code style="font-size:12px;">${item.cert_number || '-'}</code></td>
+                        <td>${formatDate(item.issue_date)} — ${formatDate(item.expiry_date)}<br><small style="color:${isExpired(item.expiry_date) ? '#dc2626' : '#10b981'}">${isExpired(item.expiry_date) ? 'Expired' : daysLeft + ' days left'}</small></td>
+                        <td><strong>RM${(parseFloat(item.payment_amount) || 0).toLocaleString()}</strong><br><small>${formatDate(item.payment_date)}</small></td>
+                        <td>${item.receipt_file ? `<a href="${receiptUrl(item.receipt_file)}" target="_blank" style="color:#667eea;"><i class="fas fa-file-pdf"></i> View PDF</a>` : '<span class="text-muted">No receipt</span>'}</td>
+                        <td><span class="status-pill ${isExpired(item.expiry_date) ? 'expired' : 'active'}">${isExpired(item.expiry_date) ? 'Expired' : 'Active'}</span></td>
+                        <td class="actions">
+                            <i class="fas fa-eye view-icon" onclick="viewRecord(${item.id})" title="View"></i>
+                            <i class="fas fa-edit edit-icon" onclick="editRecord(${item.id})" title="Edit"></i>
+                            <i class="fas fa-trash delete-icon" onclick="deleteRecord(${item.id})" title="Delete"></i>
+                            <i class="fas fa-download download-icon" onclick="generateReceiptFromRecord(${item.id})" title="Generate Receipt" style="color:#10b981;cursor:pointer;"></i>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function handleReceiptUpload() {
+            const input = document.getElementById('receiptUpload');
+            const fileInfo = document.getElementById('receiptFileName');
+            if (input.files.length > 0) {
+                uploadedReceipt = input.files[0];
+                if (uploadedReceipt.type !== 'application/pdf') {
+                    alert('Please upload a PDF receipt only');
+                    clearReceipt();
+                    return;
+                }
+                fileInfo.innerHTML = `<i class="fas fa-file-pdf text-danger"></i> ${uploadedReceipt.name} <i class="fas fa-trash" style="cursor:pointer;margin-left:10px;" onclick="clearReceipt()"></i>`;
+            }
+        }
+
+        function clearReceipt() {
+            uploadedReceipt = null;
+            document.getElementById('receiptUpload').value = '';
+            document.getElementById('receiptFileName').innerHTML = '';
+        }
+
+        function openAddModal() {
+            currentEditId = null;
+            uploadedReceipt = null;
+            removeReceipt = false;
+            existingReceiptFile = null;
+            document.getElementById('modalTitle').innerText = 'New Accreditation Record';
+            document.getElementById('programSelect').value = '';
+            document.querySelector('input[name="accreditationType"][value="PA"]').checked = true;
+            document.getElementById('certNumber').value = '';
+            document.getElementById('issueDate').value = '';
+            document.getElementById('expiryDate').value = '';
+            document.getElementById('paymentDate').value = '';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentRef').value = '';
+            document.getElementById('paymentNotes').value = '';
+            document.getElementById('receiptFileName').innerHTML = '';
+            document.getElementById('receiptUpload').value = '';
+            document.getElementById('existingReceiptSection').style.display = 'none';
+            document.getElementById('accreditationModal').style.display = 'block';
+        }
+
+        // EDIT RECORD - Using accreditationData array (same as working code)
+        async function editRecord(id) {
+            const record = accreditationData.find(r => r.id === id);
+            if (!record) {
+                alert('Record not found');
+                return;
+            }
+            
+            currentEditId = record.id;
+            existingReceiptFile = record.receipt_file;
+            uploadedReceipt = null;
+            removeReceipt = false;
+            
+            document.getElementById('modalTitle').innerText = 'Edit Accreditation Record';
+            document.getElementById('programSelect').value = record.program_id;
+            document.querySelector(`input[name="accreditationType"][value="${record.accreditation_type}"]`).checked = true;
+            document.getElementById('certNumber').value = record.cert_number || '';
+            document.getElementById('issueDate').value = formatInputDate(record.issue_date);
+            document.getElementById('expiryDate').value = formatInputDate(record.expiry_date);
+            document.getElementById('paymentDate').value = formatInputDate(record.payment_date);
+            document.getElementById('paymentAmount').value = record.payment_amount || '';
+            document.getElementById('paymentRef').value = record.payment_ref || '';
+            document.getElementById('paymentNotes').value = record.payment_notes || '';
+            document.getElementById('receiptFileName').innerHTML = '';
+            document.getElementById('receiptUpload').value = '';
+            
+            if (existingReceiptFile) {
+                document.getElementById('existingReceiptSection').style.display = 'block';
+                document.getElementById('existingReceiptFile').innerHTML = `<i class="fas fa-file-pdf text-danger"></i> <a href="${receiptUrl(existingReceiptFile)}" target="_blank">${existingReceiptFile}</a> <i class="fas fa-trash" style="cursor:pointer;margin-left:10px;color:#dc2626;" onclick="removeExistingReceipt()"></i>`;
+            } else {
+                document.getElementById('existingReceiptSection').style.display = 'none';
+            }
+            
+            document.getElementById('accreditationModal').style.display = 'block';
+        }
+
+        function removeExistingReceipt() {
+            removeReceipt = true;
+            document.getElementById('existingReceiptSection').style.display = 'none';
+            existingReceiptFile = null;
+        }
+
+        async function saveRecord() {
+            const programSelect = document.getElementById('programSelect');
+            const programId = programSelect.value;
+            const programCode = programSelect.options[programSelect.selectedIndex]?.getAttribute('data-code') || '';
+            const programName = programSelect.options[programSelect.selectedIndex]?.getAttribute('data-name') || '';
+            const accreditationType = document.querySelector('input[name="accreditationType"]:checked').value;
+            const certNumber = document.getElementById('certNumber').value;
+            const issueDate = document.getElementById('issueDate').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            const paymentDate = document.getElementById('paymentDate').value;
+            const paymentAmount = document.getElementById('paymentAmount').value;
+            const paymentRef = document.getElementById('paymentRef').value;
+            const paymentNotes = document.getElementById('paymentNotes').value;
+
+            if (!programId || !certNumber || !issueDate || !expiryDate || !paymentDate || !paymentAmount) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('program_id', programId);
+            formData.append('program_code', programCode);
+            formData.append('program_name', programName);
+            formData.append('accreditation_type', accreditationType);
+            formData.append('cert_number', certNumber);
+            formData.append('issue_date', issueDate);
+            formData.append('expiry_date', expiryDate);
+            formData.append('payment_date', paymentDate);
+            formData.append('payment_amount', paymentAmount);
+            formData.append('payment_ref', paymentRef);
+            formData.append('payment_notes', paymentNotes);
+            formData.append('status', new Date(expiryDate) < new Date() ? 'Expired' : 'Active');
+
+            if (uploadedReceipt) formData.append('receipt_file', uploadedReceipt);
+            if (existingReceiptFile && !removeReceipt) formData.append('existing_receipt', existingReceiptFile);
+            if (removeReceipt) formData.append('remove_receipt', 'true');
+
+            try {
+                const url = currentEditId ? `/api/accreditation/${currentEditId}` : '/api/accreditation';
+                const method = currentEditId ? 'PUT' : 'POST';
+                const res = await fetch(url, { method, body: formData });
+                
+                if (res.ok) {
+                    const result = await res.json();
+                    closeModal();
+                    loadAccreditationData();
+                    
+                    // Auto generate receipt after save
+                    generateReceiptPDF({
+                        id: result.id || currentEditId || Date.now(),
+                        program_code: programCode,
+                        program_name: programName,
+                        accreditation_type: accreditationType,
+                        cert_number: certNumber,
+                        issue_date: issueDate,
+                        expiry_date: expiryDate,
+                        payment_date: paymentDate,
+                        payment_amount: paymentAmount,
+                        payment_ref: paymentRef
+                    });
+                    
+                    alert(currentEditId ? 'Record updated successfully & Receipt generated' : 'Record created successfully & Receipt generated');
+                } else {
+                    const error = await res.text();
+                    alert('Error saving record: ' + error);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Error saving record');
+            }
+        }
+
+        async function generateReceiptPDF(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFillColor(102, 126, 234);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('UMT ACADEMIC QUALITY ASSURANCE SYSTEM', 105, 20, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('Universiti Malaysia Terengganu', 105, 32, { align: 'center' });
+            
+            doc.setTextColor(102, 126, 234);
+            doc.setFontSize(28);
+            doc.text('OFFICIAL RECEIPT', 105, 65, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Receipt No: RCPT-${data.id}-${Date.now()}`, 160, 75, { align: 'right' });
+            doc.text(`Date: ${new Date().toLocaleDateString('en-MY')}`, 160, 82, { align: 'right' });
+            
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, 88, 190, 88);
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(51, 51, 51);
+            doc.text('PROGRAM INFORMATION', 20, 100);
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
+            doc.text(`Program Code: ${data.program_code}`, 20, 112);
+            doc.text(`Program Name: ${data.program_name}`, 20, 122);
+            doc.text(`Accreditation Type: ${data.accreditation_type === 'PA' ? 'Provisional Accreditation (PA)' : 'Full Accreditation (FA)'}`, 20, 132);
+            
+            doc.line(20, 140, 190, 140);
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(51, 51, 51);
+            doc.text('CERTIFICATE DETAILS', 20, 155);
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
+            doc.text(`Certificate Number: ${data.cert_number}`, 20, 167);
+            doc.text(`Issue Date: ${formatDate(data.issue_date)}`, 20, 177);
+            doc.text(`Expiry Date: ${formatDate(data.expiry_date)}`, 20, 187);
+            
+            doc.line(20, 195, 190, 195);
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(51, 51, 51);
+            doc.text('PAYMENT DETAILS', 20, 210);
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(80, 80, 80);
+            doc.text(`Payment Date: ${formatDate(data.payment_date)}`, 20, 222);
+            doc.text(`Payment Reference: ${data.payment_ref || '-'}`, 20, 232);
+            
+            doc.setFillColor(102, 126, 234);
+            doc.roundedRect(20, 242, 170, 25, 5, 5, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`TOTAL AMOUNT PAID: RM ${parseFloat(data.payment_amount).toLocaleString()}`, 105, 258, { align: 'center' });
+            
+            doc.setTextColor(150, 150, 150);
+            doc.setFontSize(8);
+            doc.text('This is a computer-generated receipt. No signature required.', 105, 285, { align: 'center' });
+            doc.text('UMT Academic Quality Assurance System - MQA COPPA Compliant', 105, 292, { align: 'center' });
+            
+            doc.save(`Receipt_${data.program_code}_${data.accreditation_type}.pdf`);
+        }
+
+        async function generateReceiptFromRecord(id) {
+            const record = accreditationData.find(r => r.id === id);
+            if (record) {
+                generateReceiptPDF({
+                    id: record.id,
+                    program_code: record.program_code,
+                    program_name: record.program_name,
+                    accreditation_type: record.accreditation_type,
+                    cert_number: record.cert_number,
+                    issue_date: record.issue_date,
+                    expiry_date: record.expiry_date,
+                    payment_date: record.payment_date,
+                    payment_amount: record.payment_amount,
+                    payment_ref: record.payment_ref
+                });
+            } else {
+                alert('Record not found');
+            }
+        }
+
+        function generateReceiptFromView() {
+            if (currentViewRecord) {
+                generateReceiptPDF(currentViewRecord);
+            }
+        }
+
+        async function deleteRecord(id) {
+            if (confirm('Delete this accreditation record?')) {
+                try {
+                    const res = await fetch(`/api/accreditation/${id}`, { method: 'DELETE' });
+                    if (res.ok) loadAccreditationData();
+                    else alert('Error deleting record');
+                } catch (err) { console.error('Error:', err); }
+            }
+        }
+
+        async function viewRecord(id) {
+            const record = accreditationData.find(r => r.id === id);
+            if (!record) {
+                alert('Record not found');
+                return;
+            }
+            currentViewRecord = record;
+            const modalBody = document.getElementById('viewModalBody');
+            modalBody.innerHTML = `
+                <div class="detail-section"><h3>Program Information</h3><div class="detail-grid"><div class="detail-item"><strong>Program Code:</strong><span>${record.program_code}</span></div><div class="detail-item"><strong>Program Name:</strong><span>${record.program_name}</span></div><div class="detail-item"><strong>Accreditation Type:</strong><span class="type-badge ${record.accreditation_type === 'PA' ? 'pa' : 'fa'}">${record.accreditation_type}</span></div></div></div>
+                <div class="detail-section"><h3>Certificate Information</h3><div class="detail-grid"><div class="detail-item"><strong>Certificate Number:</strong><span><code>${record.cert_number}</code></span></div><div class="detail-item"><strong>Issue Date:</strong><span>${formatDate(record.issue_date)}</span></div><div class="detail-item"><strong>Expiry Date:</strong><span>${formatDate(record.expiry_date)}</span></div><div class="detail-item"><strong>Status:</strong><span class="status-pill ${isExpired(record.expiry_date) ? 'expired' : 'active'}">${isExpired(record.expiry_date) ? 'Expired' : 'Active'}</span></div></div></div>
+                <div class="detail-section"><h3>Payment Information</h3><div class="detail-grid"><div class="detail-item"><strong>Payment Date:</strong><span>${formatDate(record.payment_date)}</span></div><div class="detail-item"><strong>Amount:</strong><span><strong style="color:#10b981;">RM${(parseFloat(record.payment_amount) || 0).toLocaleString()}</strong></span></div><div class="detail-item"><strong>Reference:</strong><span>${record.payment_ref || '-'}</span></div>${record.receipt_file ? `<div class="detail-item"><strong>Receipt:</strong><span><a href="${receiptUrl(record.receipt_file)}" target="_blank" style="color:#667eea;"><i class="fas fa-file-pdf"></i> Download PDF</a></span></div>` : ''}${record.payment_notes ? `<div class="detail-item full-width"><strong>Notes:</strong><span>${record.payment_notes}</span></div>` : ''}</div></div>
+            `;
+            document.getElementById('viewModal').style.display = 'block';
+        }
+
+        function editFromView() {
+            closeViewModal();
+            if (currentViewRecord) editRecord(currentViewRecord.id);
+        }
+
+        function closeModal() {
+            document.getElementById('accreditationModal').style.display = 'none';
+            currentEditId = null;
+            uploadedReceipt = null;
+            removeReceipt = false;
+            existingReceiptFile = null;
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').style.display = 'none';
+            currentViewRecord = null;
+        }
+
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toUpperCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const rows = document.getElementById('accreditationTableBody').getElementsByTagName('tr');
+            for (let row of rows) {
+                const text = row.innerText.toUpperCase();
+                const matchSearch = text.includes(search);
+                const matchType = !typeFilter || text.includes(typeFilter);
+                const matchStatus = !statusFilter || text.includes(statusFilter.toUpperCase());
+                row.style.display = (matchSearch && matchType && matchStatus) ? '' : 'none';
+            }
+        }
+
+        window.onclick = (e) => {
+            if (e.target === document.getElementById('accreditationModal')) closeModal();
+            if (e.target === document.getElementById('viewModal')) closeViewModal();
+        };
+        
+        window.onload = () => loadAccreditationData();
+    </script>
+</body>
+</html>

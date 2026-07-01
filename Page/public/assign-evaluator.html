@@ -179,16 +179,20 @@
         }
 
         // ========================================
-        // LOAD EVALUATORS
+        // LOAD EVALUATORS - UMT INTERNAL EVALUATORS
         // ========================================
         async function loadEvaluators() {
-            try {
-                const res = await fetch('/api/evaluators');
-                evaluators = await res.json();
-                document.getElementById('evaluatorCount').innerText = evaluators.length;
-            } catch (e) {
-                console.error('Error loading evaluators:', e);
-            }
+            // ✅ Static list of UMT internal evaluators
+            evaluators = [
+                { id: 1, name: 'Dr. Yeny Nadira Kamaruzzaman', expertise: 'Fisheries' },
+                { id: 2, name: 'Assoc. Prof. Ts. Dr. Norizah Mhd Sarbon', expertise: 'Food Tech' },
+                { id: 3, name: 'Assoc. Prof. Ts. Dr. Wan Nural Jawahir', expertise: 'Software Eng' },
+                { id: 4, name: 'Prof. Gs. Ts. ChM. Dr. Aidy', expertise: 'Environmental' },
+                { id: 5, name: 'Prof. Madya Ts. Dr. Nurul Haqimin', expertise: 'Maritime Mgmt' },
+                { id: 6, name: 'Assoc. Prof. Dr. Abdul Hanis Embong', expertise: 'Management' }
+            ];
+            document.getElementById('evaluatorCount').innerText = evaluators.length;
+            console.log('✅ Evaluators loaded:', evaluators.length);
         }
 
         // ========================================
@@ -283,7 +287,7 @@
         }
 
         // ========================================
-        // OPEN ASSIGN MODAL
+        // OPEN ASSIGN MODAL - WITH UMT EVALUATORS
         // ========================================
         function openAssignModal(programId, programName) {
             currentProgramId = programId;
@@ -292,17 +296,23 @@
             document.getElementById('completionDate').value = '';
             document.getElementById('assignmentNotes').value = '';
             
+            // ✅ Static dropdown with UMT evaluators
             const select = document.getElementById('evaluatorSelect');
-            select.innerHTML = '<option value="">-- Select Evaluator --</option>';
-            evaluators.forEach(e => {
-                select.innerHTML += `<option value="${e.id}">${e.name} (${e.expertise})</option>`;
-            });
+            select.innerHTML = `
+                <option value="">-- Select Evaluator --</option>
+                <option value="1">Dr. Yeny Nadira Kamaruzzaman (Fisheries)</option>
+                <option value="2">Assoc. Prof. Ts. Dr. Norizah Mhd Sarbon (Food Technology)</option>
+                <option value="3">Assoc. Prof. Ts. Dr. Wan Nural Jawahir (Software Engineering)</option>
+                <option value="4">Prof. Gs. Ts. ChM. Dr. Aidy (Environmental)</option>
+                <option value="5">Prof. Madya Ts. Dr. Nurul Haqimin (Maritime Management)</option>
+                <option value="6">Assoc. Prof. Dr. Abdul Hanis Embong (Management)</option>
+            `;
             
             document.getElementById('assignModal').style.display = 'block';
         }
 
         // ========================================
-        // CONFIRM ASSIGNMENT - 100% WORKING
+        // CONFIRM ASSIGNMENT
         // ========================================
         async function confirmAssign() {
             const evaluatorId = document.getElementById('evaluatorSelect').value;
